@@ -3,7 +3,7 @@ import cors from "cors";
 
 const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+app.use(cors({ origin: "*" }));
 
 app.get("/ping", (req, res) => res.send("pong"));
 
