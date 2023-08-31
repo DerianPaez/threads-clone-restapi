@@ -7,6 +7,10 @@ app.use(cors({ origin: "http://localhost:5173" }));
 
 app.get("/ping", (req, res) => res.send("pong"));
 
+app.use((req, res, next) => {
+  res.status(404).json({ message: "Not found" });
+});
+
 app.listen(3000, () => {
   console.log("Servidor backend en http://localhost:3000");
 });
