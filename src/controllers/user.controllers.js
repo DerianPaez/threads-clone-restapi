@@ -57,7 +57,7 @@ export const loginUser = async (req, res) => {
     });
 
     await pool.query(
-      "UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
       [users.at(0).id]
     );
 
