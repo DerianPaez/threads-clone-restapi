@@ -1,9 +1,10 @@
 import { pool } from "../db.js";
 import bcrypt from "bcrypt";
+import generateToken from "../lib/generateToken.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { fullname, email, password } = req.body;
     const passwordEncrypted = await bcrypt.hash(password, 10);
 
     const [userAlreadyExists] = await pool.query(
@@ -15,16 +16,13 @@ export const registerUser = async (req, res) => {
       return res.status(409).json({ message: "User already exists!" });
     }
 
-    const [newUser] = await pool.query(
-      "INSERT INTO users (username, email, password) VALUES(?, ?, ?)",
-      [username, email, passwordEncrypted]
+    await pool.query(
+      "INSERT INTO users (fullname, email, password) VALUES(?, ?, ?)",
+      [fullname, email, passwordEncrypted]
     );
 
     res.status(201).json({
-      id: newUser.insertId,
-      username,
-      email,
-      password: passwordEncrypted,
+      message: "User created successfully",
     });
   } catch (err) {
     console.log(err);
@@ -50,7 +48,20 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    res.json({ user: users.at(0), message: "Logged in successfully" });
+    const { id, fullname } = users.at(0);
+
+    const token = await generateToken({
+      id,
+      fullname,
+      email,
+    });
+
+    await pool.query(
+      "UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [users.at(0).id]
+    );
+
+    res.json({ token, message: "Logged in successfully" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Server Error" });
