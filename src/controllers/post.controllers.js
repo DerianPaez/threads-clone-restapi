@@ -15,7 +15,7 @@ export const getFeed = async (_req, res) => {
 
 export const createPost = async (req, res) => {
   try {
-    const userId = req["user_id"];
+    const userId = req.user_id;
     const { title, content } = req.body;
 
     const [newPost] = await pool.query(
@@ -32,7 +32,7 @@ export const createPost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
   try {
-    const userId = req["user_id"];
+    const userId = req.user_id;
     const { id } = req.query;
 
     const [posts] = await pool.query("SELECT * FROM posts WHERE id = ?", [id]);

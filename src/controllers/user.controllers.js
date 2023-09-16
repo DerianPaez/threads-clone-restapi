@@ -67,3 +67,7 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+export const validateToken = async (_req, res) => {
+  res.json({ valid: true, message: "Token is valid" });
+};
